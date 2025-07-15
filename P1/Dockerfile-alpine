@@ -1,9 +1,0 @@
-# Base ultra légère
-FROM alpine:latest
-
-# Installer busybox (déjà présent dans Alpine, mais on précise pour la clarté)
-RUN apk update && apk add --no-cache busybox
-
-# Pas de configuration IP par défaut
-
-CMD ["/bin/sh"]
