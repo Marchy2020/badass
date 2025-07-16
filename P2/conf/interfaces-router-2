@@ -1,0 +1,23 @@
+auto eth0
+iface eth0 inet static
+    address 10.1.1.2
+    netmask 255.255.255.0
+
+auto vxlan10
+iface vxlan10 inet static
+    address 20.1.1.2
+    netmask 255.255.255.0
+    pre-up /sbin/ip link add name vxlan10 type vxlan id 10 dev eth0 \
+              remote 10.1.1.1 local 10.1.1.2 dstport 4789
+    post-down /sbin/ip link del vxlan10
+
+auto br0
+iface br0 inet manual
+    pre-up /sbin/ip link add br0 type bridge || true
+    pre-up /sbin/ip link set dev br0 up
+    post-down /sbin/ip link set dev br0 down
+    post-down /sbin/ip link del br0
+    up brctl addif br0 eth1
+    up brctl addif br0 vxlan10
+    down brctl delif br0 eth1 || true
+    down brctl delif br0 vxlan10 || true
