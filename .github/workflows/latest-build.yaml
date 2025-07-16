@@ -36,4 +36,4 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/Marchy2020/badass-${{ matrix.container }}:latest
+            ghcr.io/marchy2020/badass-${{ matrix.container }}:latest
