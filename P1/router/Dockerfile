@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 FROM alpine:3.22
-RUN apk add --no-cache frr tini
+RUN apk add --no-cache iproute2 frr tini
 
 COPY ./daemons /etc/frr/daemons
 
