@@ -1,0 +1,48 @@
+# =========================
+# CONFIGURATION CLASSIQUE (/etc/network/interfaces)
+# =========================
+# Déclaration de l'interface loopback (router-id BGP/OSPF)
+auto lo
+iface lo inet static
+    address 10.0.0.2
+    netmask 255.255.255.255
+
+# Déclaration de l'interface physique principale (réseau underlay)
+auto eth0
+iface eth0 inet static
+    address 10.0.0.2
+    netmask 255.255.255.0
+
+# VXLAN VNI 10
+auto vxlan10
+iface vxlan10 inet manual
+    pre-up /sbin/ip link add name vxlan10 type vxlan id 10 dev eth0 dstport 4789
+    post-down /sbin/ip link del vxlan10
+
+# Bridge pour connecter host et VXLAN
+auto br0
+iface br0 inet manual
+    pre-up /sbin/ip link add br0 type bridge || true
+    pre-up /sbin/ip link set dev br0 up
+    post-down /sbin/ip link set dev br0 down
+    post-down /sbin/ip link del br0
+    up brctl addif br0 eth1
+    up brctl addif br0 vxlan10
+    down brctl delif br0 vxlan10 || true
+    down brctl delif br0 eth1 || true
+
+# =========================
+# CONFIGURATION MANUELLE (depuis la console GNS3 ou Docker)
+# =========================
+! ip addr add 2.2.2.2/32 dev lo           # Ajoute l'IP loopback (router-id)
+! ip link set lo up                      # Met le loopback UP
+! ip addr add 10.0.1.2/24 dev eth0       # Ajoute l'IP sur eth0
+! ip link set eth0 up                    # Met l'interface eth0 UP
+! # VXLAN :
+! ip link add vxlan10 type vxlan id 10 dev eth0 dstport 4789
+! ip link add br0 type bridge
+! ip link set br0 up
+! ip link set vxlan10 up
+! ip link set eth1 up
+! brctl addif br0 eth1
+! brctl addif br0 vxlan10
