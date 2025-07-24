@@ -11,7 +11,7 @@ iface lo inet static
 # Déclaration de l'interface physique principale (réseau underlay)
 auto eth0
 iface eth0 inet static
-    address 10.0.0.100         # Adresse IP de l'interface eth0 (réseau de transport)
+    address 10.0.0.1        # Adresse IP de l'interface eth0 (réseau de transport)
     netmask 255.255.255.0      # Masque /24 = réseau 10.0.0.0/24
 
 # =========================

@@ -4,13 +4,13 @@
 # Déclaration de l'interface loopback (router-id BGP/OSPF)
 auto lo
 iface lo inet static
-    address 10.0.0.2
+    address 10.0.1.2
     netmask 255.255.255.255
 
 # Déclaration de l'interface physique principale (réseau underlay)
 auto eth0
 iface eth0 inet static
-    address 10.0.0.2
+    address 10.0.0.3
     netmask 255.255.255.0
 
 # VXLAN VNI 10
