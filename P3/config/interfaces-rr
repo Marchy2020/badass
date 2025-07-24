@@ -19,5 +19,5 @@ iface eth0 inet static
 # =========================
 ! ip addr add 10.0.0.100/32 dev lo         # Ajoute l'IP loopback (router-id)
 ! ip link set lo up                       # Met le loopback UP
-! ip addr add 10.0.0.100/24 dev eth0      # Ajoute l'IP sur eth0
+! ip addr add 10.0.0.1/24 dev eth0      # Ajoute l'IP sur eth0
 ! ip link set eth0 up                     # Met l'interface eth0 UP
