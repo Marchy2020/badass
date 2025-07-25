@@ -7,8 +7,7 @@ auto vxlan10
 iface vxlan10 inet static
     address 20.1.1.2
     netmask 255.255.255.0
-    pre-up /sbin/ip link add name vxlan10 type vxlan id 10 dev eth0 \
-              remote 10.1.1.1 local 10.1.1.2 dstport 4789
+    pre-up /sbin/ip link add vxlan10 type vxlan id 10 group 239.1.1.1 dev eth0 dstport 4789
     post-down /sbin/ip link del vxlan10
 
 auto br0
