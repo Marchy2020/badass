@@ -1,0 +1,49 @@
+# VTEP 2
+/sbin/ip addr flush dev eth0
+# Nettoyage avant création
+/sbin/ip link del vxlan10 2>/dev/null
+/sbin/ip link del br0 2>/dev/null
+
+# Création VXLAN et bridge
+/sbin/ip link add name vxlan10 type vxlan id 10 dev eth0 dstport 4789
+/sbin/ip link set dev vxlan10 up
+/sbin/ip link add name br0 type bridge
+/sbin/ip link set dev br0 up
+/sbin/ip link set dev eth0 mtu 1450
+/sbin/ip addr add 10.1.1.4/30 dev br0 
+brctl addif br0 eth0
+brctl addif br0 eth1
+brctl addif br0 vxlan10
+
+# Configuration FRR
+vtysh << EOF
+configure terminal
+!  Turn off IPv6 forwarding
+no ipv6 forwarding
+!  Set the IP addres and enable OSPF on lo interface
+interface lo
+ ip address 1.1.1.3/32
+exit
+! BGP EVPN Enable a routing process BGP with AS number 1
+router bgp 1
+ !  Specify a BGP neighbor with AS number 1
+ neighbor 1.1.1.1 remote-as 1
+ !  Communicate with a neighbor through lo interface
+ neighbor 1.1.1.1 update-source lo
+ !  Enable the Address Family for neighbor 1.1.1.1 and advertise all local VNIs
+ address-family l2vpn evpn
+  neighbor 1.1.1.1 activate
+  advertise-all-vni
+ exit-address-family
+exit
+interface br0
+ ip ospf network point-to-point
+exit
+!  Enable a routing process OSPF
+router ospf
+    network 10.1.1.4/30 area 0
+    network 1.1.1.3/32 area 0
+exit
+exit
+write
+EOF
